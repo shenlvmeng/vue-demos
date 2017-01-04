@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>Vue simple todos</title>
+	<script type="text/javascript" src="vue.js"></script>
+</head>
+<body>
+	<div id="app">
+		<input placeholder="Say something" v-model="message" @keyup.enter="addTodo" />
+		<ol>
+			<li 
+				is="todo-item"
+				v-for="(todo, index) in todos"
+				v-bind:title="todo"
+				@remove="todos.splice(index, 1)"
+			>
+		</ol>
+	</div>
+	<script type="text/javascript">
+		Vue.component('todo-item', {
+			template: '\
+				<li>\
+					{{title}}\
+					<button @click="$emit(\'remove\')">X</button>\
+				</li>',
+			props: ['title']
+		});
+		var app = new Vue({
+			el: "#app",
+			data: function() {
+				return {
+					todos: ['draw line pics', 'pick up carrots', 'move pig houses'],
+					message: ''
+				}
+			},
+			methods: {
+				addTodo: function() {
+					if (this.message.trim() !== '') {
+						this.todos.push(this.message);
+					}
+					this.message = '';
+				}
+			}
+		});
+	</script>
+</body>
+</html>

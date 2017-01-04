@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>Vue Render函数</title>
+	<script type="text/javascript" src="vue.js"></script>
+</head>
+<body>
+	<div id="demo">
+		<flexible-heading :level="1">Hello world</flexible-heading>
+		<stateless-component :a="3" :b="4" :c="5">Pythagorean tuple: </stateless-component>
+		<stateless-component :a="3" :b="4" :c="6">Simple tuple: </stateless-component>
+	</div>
+	<script type="text/javascript">
+		Vue.component('flexible-heading',{
+			render: function (createElement) {
+				return createElement(
+					//{String | Object | Function}
+					//一个HTML标签，组件选项或return上述其中一种的函数
+						'div', 
+					//{Object}
+					//标签对应属性的数据对象，可选
+						{
+							'class': [{
+								foo: true,
+								bar: false
+							}, this.activeClass],
+							style: {
+								color: 'red',
+								fontSize: '14px'
+							},
+							attrs: {
+								id: 'foo'
+							},
+							//domProps: {
+							//	innerHTML: 'quz'
+							//},
+							on: {
+								'~click': this.clickHandler
+							},
+							//注意，仅对于组件，用于监听原生事件
+							nativeOn: {
+								mouseover: this.moverHandler
+							},
+							key: 'myKey',
+							ref: 'myRef'
+						}, 
+					//{String | Array}
+					//子节点（VNodes)，Vnodes必须唯一，可选
+						[
+							createElement('h' + this.level, [createElement('a', {
+									attrs: {
+										href: "#"
+									}
+								}, this.$slots.default)
+							])
+						]
+					);
+			},
+			methods: {
+				clickHandler: function () {
+					console.log(this.counter++);
+				},
+				moverHandler: function () {
+					console.log(Math.random());
+				}
+			},
+			data: function () {
+				return {
+					activeClass: 'baz',
+					counter: 0
+				};
+			},
+			props: {
+				level: {
+					type: Number,
+					required: true
+				}
+			}
+		});
+		Vue.component('stateless-component', {
+			functional: true,
+			//use context for missing 'this'
+			render: function (createElement, context) {
+				var a = context.props.a,
+					b = context.props.b,
+					c = context.props.c,
+					isSpecial = (a*a + b*b == c*c);
+				return createElement(
+					'p',
+					[
+						//也可以用context.children
+						context.slots().default, 
+						createElement('span', {
+							style: {
+								color: (isSpecial ? 'blue' : 'orange')
+							}
+						}, a + " " + b + " " + c)
+					]
+				);
+			},
+			//可选
+			props: {
+				a: {
+					type: Number,
+					required: true
+				},
+				b: {
+					type: Number,
+					required: true
+				},
+				c: {
+					type: Number,
+					required: true
+				}
+			}
+		});
+		new Vue({
+			el: "#demo"
+		});
+	</script>
+</body>
+</html>

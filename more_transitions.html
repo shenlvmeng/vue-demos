@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>Vue复杂过渡</title>
+	<script type="text/javascript" src="vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+	<style type="text/css">
+		body{
+			font-family: Times;
+		}
+		.components-fade-enter-active, .components-fade-leave-active {
+			transition: opacity .5s ease;
+		}
+		.components-fade-enter, .components-fade-leave-active {
+			opacity: 0;
+		}
+		.num {
+			display: inline-block;
+			transition: all 1s;
+			margin-right: 5px;
+		}
+		.v-enter, .v-leave-active {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		.v-leave-active {
+			position: absolute;
+		}
+		.sudo-num {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			width: 1.5em;
+			height: 1.5em;
+			border: 1px solid #aaa;
+			margin-bottom: -1px;
+			margin-right: -1px;
+		}
+		.sudo-num:nth-child(3n) {
+			margin-right: 0;
+		}
+		.sudo-num:nth-child(27n) {
+			margin-bottom: 0;
+		}
+		.sudo-group {
+			width: 15em;
+			display: flex;
+			flex-wrap: wrap;
+			margin-top: 10px;
+		}
+		.sudo-move {
+			transition: transform 1s;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<input type="radio" id="c-a" value="c-a" v-model="comp">
+		<label for="c-a">Component A</label>
+		<input type="radio" id="c-b" value="c-b" v-model="comp">
+		<label for="c-b">Component B</label>
+		<transition name="components-fade" mode="out-in">
+			<component :is="comp"></component>
+		</transition>
+	</div>
+	<div id="demo">
+		<h5>Transition group</h5>
+		<button @click="add">Add</button>
+		<button @click="remove">Remove</button>
+		<button @click="shuffle">Shuffle</button>
+		<transition-group name="v" tag="p">
+			<span v-for="num in nums" :key="num" class="num">{{num}}</span>
+		</transition-group>
+	</div>
+	<div id="sudoku">
+		<h5>Sudoku</h5>
+		<button @click="shuffle">Shuffle</button>
+		<!--key should be unique! -->
+		<transition-group name="sudo" tag="div" class="sudo-group">
+			<div v-for="item in items" :key="item.id" class="sudo-num">{{item.num}}</div>
+		</transition-group>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: "#app",
+			data: {
+				comp: 'c-a'
+			},
+			components: {
+				'c-a': {
+					template: '<div>I am a component A</div>'
+				},
+				'c-b': {
+					template: '<div>I am a component B</div>'
+				}
+			}
+		});
+		new Vue({
+			el: "#demo",
+			data: {
+				nums: [1,2,3,4,5,6,7,8,9],
+				next: 10
+			},
+			methods: {
+				random: function () {
+					return Math.floor(Math.random() * this.nums.length);
+				},
+				add: function () {
+					this.nums.splice(this.random(), 0, this.next++);
+				},
+				remove: function () {
+					this.nums.splice(this.random(), 1);
+				},
+				shuffle: function () {
+					this.nums = _.shuffle(this.nums);
+				}
+			}
+		});
+		new Vue({
+			el: "#sudoku",
+			data: {
+				items: Array.apply(null, {length: 81})
+					.map(function(_, index){
+						return {
+							id: index,
+							num: index % 9 + 1
+						};
+					})
+			},
+			methods: {
+				shuffle: function () {
+					this.items = _.shuffle(this.items);
+				}
+			}
+		});
+	</script>
+</body>
+</html>

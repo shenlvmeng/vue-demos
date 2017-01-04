@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>Vue自定义指令与Mixins</title>
+	<script type="text/javascript" src="vue.js"></script>
+</head>
+<body>
+	<div id="demo">
+		<input type="text" v-focus>
+	</div>
+	<script type="text/javascript">
+		//创建自定义的指令
+		Vue.directive('focus', {
+			inserted: function (el, binding, vnode) {
+				el.focus();
+				console.log(binding);
+				console.log(vnode);
+			}
+		});
+		//创建自定义的混合
+		var myMixin = {
+			created: function () {
+				console.log('Hello from mixin.');
+			},
+			methods: {
+				foo: function () {
+					console.log('foo');
+				},
+				bar: function () {
+					console.log('bar from mixin');
+				}
+			}
+		};
+		//应用在自定义组件中
+		var Component = Vue.extend({
+			mixins: [myMixin]
+		});
+		var comp = new Component();
+		//应用在组件实例中
+		var vm = new Vue({
+			mixins: [myMixin],
+			methods: {
+				bar: function () {
+					console.log('bar from vm');
+				},
+				baz: function() {
+					console.log('baz');
+				}
+			}
+
+		})
+
+		vm.foo();
+		vm.bar();
+		vm.baz();
+
+		new Vue({
+			el: "#demo"
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<title>Vue过渡效果</title>
+	<script type="text/javascript" src="vue.js"></script>
+	<style type="text/css">
+		.v-enter-active, .fade-enter-active {
+			transition: all .5s ease;
+		}
+		.v-leave-active, .fade-leave-active {
+			transition: all .5s ease;
+		}
+		.v-enter, .v-leave-active {
+			transform: translateX(10px);
+			opacity: 0;
+		}
+		.fade-enter, .fade-leave-active{
+			opacity: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<button @click="show = !show">Toggle</button>
+		<transition
+			@before-enter="beforeEnter"
+			@enter="enter"
+			@after-enter="afterEnter"
+			@enter-cancelled="enterCancelled"
+			@before-leave="beforeLeave"
+			@leave="leave"
+			@after-leave="afterLeave"
+			@leave-cacelled="leaveCancelled">
+			<p v-show="show">Now you see me.</p>
+		</transition>
+	</div>
+	<div id="demo">
+		<button @click="show = !show">Toggle</button>
+		<transition>		
+			<p v-if="show">Now you see me</p>
+		</transition>
+	</div>
+	<div id="demo2">
+		<transition name="fade" mode="out-in">
+			<button :key="state" @click="turn">{{state}}</button>
+		</transition>
+	</div>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: "#app",
+			data: {
+				show: true
+			},
+			methods: {
+				beforeEnter: function(el) {
+					console.log("Before enter");
+				},
+				enter: function(el, done) {
+					console.log("Enter.");
+					done();
+				},
+				afterEnter: function(el) {
+					console.log("After enter.");
+				},
+				enterCancelled: function(el) {
+					console.log("Enter has been cancelled.");
+				},
+				beforeLeave: function(el) {
+					console.log("Before leave.");
+				},
+				leave: function(el, done) {
+					console.log("Leave.");
+					done();
+				},
+				afterLeave: function(el) {
+					console.log("After leave.");
+				},
+				leaveCancelled: function(el) {
+					console.log("Leave has been cancelled.");
+				}
+			}
+		});
+		var vm2 = new Vue({
+			el: "#demo",
+			data: {
+				show: true
+			}
+		});
+		new Vue({
+			el: "#demo2",
+			data: {
+				state: 'Click'
+			},
+			methods: {
+				turn: function() {
+					this.state = (this.state == "Click" ? "OK" :  "Click");
+				}
+			}
+		})
+	</script>
+</body>
+</html>

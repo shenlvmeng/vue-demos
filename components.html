@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>test2</title>
+	<script type="text/javascript" src="vue.js"></script>
+	<style type="text/css">
+		.v-enter-active, .v-leave-active {
+			transition: opacity .5s;
+		}
+		.v-enter, .v-leave-active {
+			opacity: 0;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<Container>
+			<p>New line 1 from parent</p>
+			<p>New line 2 from parent</p>
+		</Container>
+	</div>
+	<div id="demo">
+		<button @click="show = !show">Toggle</button>
+		<transition>
+			<p v-if="show">Now you see me</p>
+		</transition>
+	</div>
+	<script type="text/javascript">
+		Vue.component('Container',{
+			template: '\
+				<div>\
+					<h1>Header from child component</h1>\
+					<slot>Default contents</slot>\
+				</div>\
+			'
+		});
+		new Vue({
+			el: "#app"
+		});
+		new Vue({
+			el: "#demo",
+			data:{
+				show: true
+			}
+		})
+	</script>
+</body>
+</html>
